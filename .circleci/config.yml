@@ -48,6 +48,8 @@ jobs:
             - "00:59:75:e0:30:7c:67:60:46:7d:ce:78:c6:6b:62:9d"
       - attach_workspace:
           at: /home/circleci/repo
+      - run: mkdir -p ~/.ssh
+      - run: ssh-keyscan 163.172.6.169 >> ~/.ssh/known_hosts
       - run: scp server flint@163.172.6.169:/home/flint/my-server
 workflows:
   version: 2
