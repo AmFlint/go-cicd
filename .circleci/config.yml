@@ -19,10 +19,10 @@ jobs:
       - run: sudo apt install -y screen
       - run: go build -o server main.go
       - run: chmod +x server
-      - run: TERM='vt100' screen -d -m ~/repo/server
-      - run: sleep 5
-      - run: netstat -tulpna
-      - run: ps -faux
+      - run:
+          name: Run API in background
+          command: ~/repo/server
+          background: true
       - run: curl localhost:8080/greetings
       - run: go test ./tests/...
   # build:
