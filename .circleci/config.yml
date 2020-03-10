@@ -16,27 +16,34 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
-      - run: sudo apt install -y screen
-      - run: go build -o server main.go
-      - run: chmod +x server
+      - attach_workspace:
+          at: /home/circleci/repo/artifacts
       - run:
           name: Run API in background
-          command: ~/repo/server
+          command: ~/repo/artifacts/server
           background: true
       - run: curl localhost:8080/greetings
       - run: go test ./tests/...
-  # build:
-  #   docker:
-  #     - image: circleci/golang:1.13
-  #   working_directory: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
-  #   steps:
-  #     - checkout
-  #     - 
-      # - run: go test -v ./...
+  build:
+    docker:
+      - image: circleci/golang:1.13
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run: mkdir artifacts
+      - run: go build -o artifacts/server main.go
+      - run: chmod +x artifacts/server
+      - persist_to_workspace:
+          root: artifacts
+          paths:
+            - server
 
 workflows:
   version: 2
   deploy:
     jobs:
+      - build
       - unit-tests
-      - e2e-tests
+      - e2e-tests:
+          requires:
+            - build
