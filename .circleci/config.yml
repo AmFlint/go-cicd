@@ -59,7 +59,7 @@ jobs:
     steps:
       - checkout
       - attach_to_workspace:
-        at: /home/circleci/repo/artifacts
+          at: /home/circleci/repo/artifacts
       - run:
           name: Load Docker image
           command: docker load -i artifacts/image
