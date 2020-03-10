@@ -86,9 +86,9 @@ jobs:
             - "00:59:75:e0:30:7c:67:60:46:7d:ce:78:c6:6b:62:9d"
       - run: mkdir -p ~/.ssh
       - run: ssh-keyscan 163.172.6.169 >> ~/.ssh/known_hosts
-      - run: ssh@flint@163.172.6.169 -t docker login $REGISTRY_ENDPOINT --username $REGISTRY_USERNAME --password $REGISTRY_PASSWORD
-      - run: ssh flint@163.172.6.169 -t docker rm -f my-server
-      - run: ssh flint@163.172.6.169 -t docker run --name my-server -d -p 8080:8080 "${REGISTRY_ENDPOINT}:${CIRCLE_SHA1}"
+      - run: ssh flint@163.172.6.169 -t "docker login $REGISTRY_ENDPOINT --username $REGISTRY_USERNAME --password $REGISTRY_PASSWORD"
+      - run: ssh flint@163.172.6.169 -t "docker rm -f my-server"
+      - run: ssh flint@163.172.6.169 -t "docker run --name my-server -d -p 8080:8080 ${REGISTRY_ENDPOINT}:${CIRCLE_SHA1}"
       
       # - run: scp server flint@163.172.6.169:/home/flint/my-server
       # - run: ssh flint@163.172.6.169 -t systemctl restart my-server
