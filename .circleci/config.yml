@@ -20,7 +20,9 @@ jobs:
       - run: go build -o server main.go
       - run: chmod +x server
       - run: TERM='vt100' screen -d -m ~/repo/server
-      - run: sleep 2
+      - run: sleep 5
+      - run: netstat -tulpna
+      - run: ps -faux
       - run: curl localhost:8080/greetings
       - run: go test ./tests/...
   # build:
