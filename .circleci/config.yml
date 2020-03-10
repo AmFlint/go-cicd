@@ -17,17 +17,21 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
+      - attach_to_workspace:
+          at: /home/circleci/repo/artifacts
       - run:
-          name: Login to docker registry
-          command: docker login $REGISTRY_ENDPOINT --username $REGISTRY_USERNAME --password $REGISTRY_PASSWORD
-      - run:
-          name: Pull Image
-          command: docker pull "${REGISTRY_ENDPOINT}:${CIRCLE_SHA1}"
+          name: Load Docker image
+          command: docker load -i artifacts/image
       - run:
           name: Run API in background
           command: docker run -p 8080:8080 "${REGISTRY_ENDPOINT}:${CIRCLE_SHA1}"
           background: true
-      - run: go test ./tests/...
+      - run:
+          name: Wait container is up
+          command: sleep 5
+      - run:
+          name: Run tests
+          command: go test ./tests/...
   build:
     docker:
       - image: circleci/golang:1.13
@@ -36,8 +40,29 @@ jobs:
       - checkout
       - setup_remote_docker
       - run:
+          name: Create artifacts directory
+          command: mkdir -p ~/repo/artifacts
+      - run:
           name: Build image
           command: docker build -t "${REGISTRY_ENDPOINT}:${CIRCLE_SHA1}" .
+      - run:
+          name: Save image to archive file
+          command: docker save "${REGISTRY_ENDPOINT}:${CIRCLE_SHA1}" -o artifacts/image
+      - persist_to_workspace:
+          root: artifacts
+          paths:
+            - image
+  push:
+    docker:
+      - image: circleci/golang:1.13
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - attach_to_workspace:
+        at: /home/circleci/repo/artifacts
+      - run:
+          name: Load Docker image
+          command: docker load -i artifacts/image
       - run:
           name: Login to docker registry
           command: docker login $REGISTRY_ENDPOINT --username $REGISTRY_USERNAME --password $REGISTRY_PASSWORD
