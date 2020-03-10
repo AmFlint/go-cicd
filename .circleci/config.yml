@@ -24,10 +24,11 @@ jobs:
           command: docker load -i artifacts/image
       - run:
           name: Run API in background
-          command: docker run -d -p 8080:8080 "${REGISTRY_ENDPOINT}:${CIRCLE_SHA1}"
-      - run:
-          name: Wait container is up
-          command: sleep 10
+          command: |
+            docker network create testing
+            docker run --network testing --name api -d -p 8080:8080 "${REGISTRY_ENDPOINT}:${CIRCLE_SHA1}"
+            docker run --network testing \
+            appropriate/curl --retry 10 --retry-delay 1 --retry-connrefused http://api:8080/greetings
       - run:
           name: Run tests
           command: go test ./tests/...
