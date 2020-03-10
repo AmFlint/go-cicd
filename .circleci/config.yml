@@ -29,6 +29,7 @@ jobs:
             docker run --network testing --name api -d -p 8080:8080 "${REGISTRY_ENDPOINT}:${CIRCLE_SHA1}"
             docker run --network testing \
             appropriate/curl --retry 10 --retry-delay 1 --retry-connrefused http://api:8080/greetings
+      - run: ls
       - run:
           name: Run tests
           command: |
