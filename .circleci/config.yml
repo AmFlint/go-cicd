@@ -95,8 +95,13 @@ workflows:
       - e2e-tests:
           requires:
             - build
+      - push:
+          requires:
+            - unit-tests
+            - e2e-tests
+            - build
       - deploy:
           requires:
-            - build
+            - push
             - e2e-tests
             - unit-tests
