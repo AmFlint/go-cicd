@@ -37,7 +37,18 @@ jobs:
           root: artifacts
           paths:
             - server
-
+  deploy:
+    docker:
+      - image: circleci/golang:1.13
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - "00:59:75:e0:30:7c:67:60:46:7d:ce:78:c6:6b:62:9d"
+      - attach_workspace:
+          at: /home/circleci/repo
+      - run: scp server flint@163.172.6.169:/home/flint/my-server
 workflows:
   version: 2
   deploy:
@@ -47,3 +58,8 @@ workflows:
       - e2e-tests:
           requires:
             - build
+      - deploy:
+          requires:
+            - build
+            - e2e-tests
+            - unit-tests
