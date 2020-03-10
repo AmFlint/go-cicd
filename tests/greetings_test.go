@@ -5,16 +5,21 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"testing"
 )
 
-const endpoint = "http://localhost:8080/greetings"
+var endpoint = "http://localhost:8080/greetings"
 
 type greetingsResponse struct {
 	Message string
 }
 
 func TestGreetingsHandler(t *testing.T) {
+	if customEndpoint := os.Getenv("TEST_ENDPOINT"); customEndpoint != "" {
+		endpoint = customEndpoint
+	}
+
 	t.Run("send person testing", func(t *testing.T) {
 		person := "testing"
 
