@@ -18,7 +18,7 @@ jobs:
       - checkout
       - run: sudo apt install -y screen
       - run: go build -o server main.go
-      - run: screen -dmS server ~/repo/handler
+      - run: screen -d -m ~/repo/handler
       - run: curl localhost:8080/greetings
       - run: go test ./tests/...
   # build:
