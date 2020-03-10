@@ -63,6 +63,7 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
+      - setup_remote_docker
       - attach_workspace:
           at: /home/circleci/repo/artifacts
       - run:
