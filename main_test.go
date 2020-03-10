@@ -5,7 +5,7 @@ import "testing"
 func TestGreetings(t *testing.T) {
 	t.Run("test greet with person", func(t *testing.T) {
 		result := greetings("testing")
-		expected := "Hello, testing"
+		expected := "Hello, testinge"
 		if result != expected {
 			t.Errorf("got result: %s, expected %s", result, expected)
 		}
