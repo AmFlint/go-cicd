@@ -19,10 +19,8 @@ jobs:
       - run: sudo apt install -y screen
       - run: go build -o server main.go
       - run: chmod +x server
-      - run: ls
-      - run: pwd
-      - run: ~/repo/server
       - run: screen -d -m ~/repo/server
+      - run: sleep 5
       - run: curl localhost:8080/greetings
       - run: go test ./tests/...
   # build:
