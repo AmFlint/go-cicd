@@ -18,6 +18,9 @@ jobs:
       - checkout
       - setup_remote_docker
       - run:
+          name: Login to docker registry
+          command: docker login $REGISTRY_ENDPOINT --username $REGISTRY_USERNAME --password $REGISTRY_PASSWORD
+      - run:
           name: Run API in background
           command: docker run -p 8080:8080 "${REGISTRY_ENDPOINT}:${CIRCLE_SHA1}"
           background: true
