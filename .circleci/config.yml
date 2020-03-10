@@ -39,7 +39,7 @@ jobs:
             --network testing \
             -e TEST_ENDPOINT=http://api:8080 \
             rg.fr-par.scw.cloud/antoine/democicd:8409d4e4fdd6545bda59ce6f71ae59a6f9bb445d \
-            ls && ls tests
+            ls tests
       - run:
           name: Run tests
           command: |
@@ -48,7 +48,7 @@ jobs:
             --network testing \
             -e TEST_ENDPOINT=http://api:8080 \
             rg.fr-par.scw.cloud/antoine/democicd:8409d4e4fdd6545bda59ce6f71ae59a6f9bb445d \
-            go test ./...
+            go test .
   build:
     docker:
       - image: circleci/golang:1.13
