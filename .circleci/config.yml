@@ -16,13 +16,11 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
-      - attach_workspace:
-          at: /home/circleci/repo/artifacts
+      - setup_remote_docker
       - run:
           name: Run API in background
-          command: ~/repo/artifacts/server
+          command: docker run -p 8080:8080 "${REGISTRY_ENDPOINT}:${CIRCLE_SHA1}"
           background: true
-      - run: curl localhost:8080/greetings
       - run: go test ./tests/...
   build:
     docker:
@@ -30,13 +28,16 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
-      - run: mkdir artifacts
-      - run: go build -o artifacts/server main.go
-      - run: chmod +x artifacts/server
-      - persist_to_workspace:
-          root: artifacts
-          paths:
-            - server
+      - setup_remote_docker
+      - run:
+          name: Build image
+          command: docker build -t "${REGISTRY_ENDPOINT}:${CIRCLE_SHA1}"
+      - run:
+          name: Login to docker registry
+          command: docker login $REGISTRY_ENDPOINT --username $REGISTRY_USERNAME --password $REGISTRY_PASSWORD
+      - run:
+          name: Push Docker image
+          command: docker push "${REGISTRY_ENDPOINT}:${CIRCLE_SHA1}"
   deploy:
     docker:
       - image: circleci/golang:1.13
@@ -46,11 +47,14 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - "00:59:75:e0:30:7c:67:60:46:7d:ce:78:c6:6b:62:9d"
-      - attach_workspace:
-          at: /home/circleci/repo
       - run: mkdir -p ~/.ssh
       - run: ssh-keyscan 163.172.6.169 >> ~/.ssh/known_hosts
-      - run: scp server flint@163.172.6.169:/home/flint/my-server
+      - run: ssh@flint@163.172.6.169 -t docker login $REGISTRY_ENDPOINT --username $REGISTRY_USERNAME --password $REGISTRY_PASSWORD
+      - run: ssh flint@163.172.6.169 -t docker rm -f my-server
+      - run: ssh flint@163.172.6.169 -t docker run --name my-server -d -p 8080:8080 "${REGISTRY_ENDPOINT}:${CIRCLE_SHA1}"
+      
+      # - run: scp server flint@163.172.6.169:/home/flint/my-server
+      # - run: ssh flint@163.172.6.169 -t systemctl restart my-server
 workflows:
   version: 2
   deploy:
