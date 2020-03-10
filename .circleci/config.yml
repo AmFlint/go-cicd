@@ -34,7 +34,7 @@ jobs:
           command: |
             docker run --entrypoint "" \
             --network testing \
-            -e TEST_ENDPOINT=http://api:8080 \
+            -e TEST_ENDPOINT=http://api:8080/greetings \
             "${REGISTRY_ENDPOINT}:${CIRCLE_SHA1}" \
             go test ./tests/...
   build:
