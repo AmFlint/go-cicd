@@ -35,20 +35,10 @@ jobs:
           name: Run tests
           command: |
             docker run --entrypoint "" \
-            -v /home/app/circleci/repo:/home/app \
             --network testing \
             -e TEST_ENDPOINT=http://api:8080 \
             rg.fr-par.scw.cloud/antoine/democicd:8409d4e4fdd6545bda59ce6f71ae59a6f9bb445d \
-            ls tests
-      - run:
-          name: Run tests
-          command: |
-            docker run --entrypoint "" \
-            -v /home/app/circleci/repo:/home/app \
-            --network testing \
-            -e TEST_ENDPOINT=http://api:8080 \
-            rg.fr-par.scw.cloud/antoine/democicd:8409d4e4fdd6545bda59ce6f71ae59a6f9bb445d \
-            go test .
+            go test ./tests/...
   build:
     docker:
       - image: circleci/golang:1.13
