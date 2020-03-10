@@ -22,8 +22,7 @@ jobs:
           command: docker login $REGISTRY_ENDPOINT --username $REGISTRY_USERNAME --password $REGISTRY_PASSWORD
       - run:
           name: Run API in background
-          command: docker run -p 8080:8080 "${REGISTRY_ENDPOINT}:${CIRCLE_SHA1}"
-          background: true
+          command: docker run -d -p 8080:8080 "${REGISTRY_ENDPOINT}:${CIRCLE_SHA1}"
       - run: go test ./tests/...
   build:
     docker:
